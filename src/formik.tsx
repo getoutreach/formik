@@ -677,15 +677,22 @@ function setNestedObjectValues(
   response = response === null ? {} : response;
 
   for (let k of Object.keys(object)) {
-    const val = object[k];
-    if (isObject(val)) {
-      if (!visited.get(val)) {
-        visited.set(val, true);
-        response[k] = {};
-        setNestedObjectValues(val, value, visited, response[k]);
+    try {
+      const val = object[k];
+      if (isObject(val)) {
+        if (!visited.get(val)) {
+          visited.set(val, true);
+          response[k] = {};
+          setNestedObjectValues(val, value, visited, response[k]);
+        }
+      } else {
+        response[k] = value;
       }
-    } else {
-      response[k] = value;
+    } catch (e) {
+      console.warn(
+        `Error fetching key '${k}' in Formik#setNestedObjectValues`,
+        e
+      ); // eslint-disable-line no-console
     }
   }
 
